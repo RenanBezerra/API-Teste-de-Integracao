@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "TB_PRODUTO")
@@ -23,6 +25,8 @@ public class Produto implements Serializable{
 	@Column(name ="COD_PRODUTO")
 	private Integer id;
 	
+	@NotNull(message = "O campo descricao não pode ser vazio")
+	@Size(min = 3,message = "O campo descrição precisa ter pelo menos 3 caracteres")
 	@Column(name = "DSC_PRODUTO", length = 255, nullable = false, unique = true )
 	private String descricao;
 

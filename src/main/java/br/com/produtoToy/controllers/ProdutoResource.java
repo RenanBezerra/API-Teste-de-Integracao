@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +60,7 @@ public class ProdutoResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> salvar(@RequestBody Produto produto) {
+	public ResponseEntity<?> salvar(@Valid @RequestBody Produto produto) {
 		Produto p = repo.save(produto);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(p.getId()).toUri();
 		return ResponseEntity.created(location).build();
