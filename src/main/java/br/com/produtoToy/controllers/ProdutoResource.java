@@ -8,13 +8,17 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,6 +31,12 @@ public class ProdutoResource {
 
 	@Autowired
 	private ProdutoRepository repo;
+	
+	@GetMapping
+	public ResponseEntity<?> findAll(@RequestParam("page") int page,@RequestParam("size") int size){
+		Page<Produto> produtos = repo.findAll(PageRequest.of(page, size));
+		return ResponseEntity.ok(produtos);
+	}
 
 	@GetMapping(value = "{id}")
 	public ResponseEntity<?> findById(@PathVariable Integer id) {
@@ -64,6 +74,18 @@ public class ProdutoResource {
 		Produto p = repo.save(produto);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(p.getId()).toUri();
 		return ResponseEntity.created(location).build();
+	}
+
+	@PutMapping
+	public ResponseEntity<?> atualizar(@Valid @RequestBody Produto produto) {
+		Optional<Produto> pOptional = repo.findById(produto.getId());
+		if (pOptional.isPresent()) {
+			repo.save(produto);
+			return ResponseEntity.noContent().build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+
 	}
 
 }

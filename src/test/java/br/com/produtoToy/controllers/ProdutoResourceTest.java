@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,13 +52,13 @@ public class ProdutoResourceTest {
 		this.mvc.perform(get(url)).andExpect(status().isNotFound());
 	}
 
-//	@Test
-//	public void testa03RequisicaoDescricaoSucesso() throws Exception{
-//		String url = "/produtos/like/havaiana";
-//		this.mvc.perform(get(url))
-//			.andExpect(status().isOk())
-//			.andExpect(content().string(containsString("Sandalia Havaiana")));
-//			}
+	@Test
+	public void testa03RequisicaoDescricaoSucesso() throws Exception{
+		String url = "/produtos/like/havaiana";
+		this.mvc.perform(get(url))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("Sandalia Havaiana")));
+			}
 	@Test
 	public void testa04RequisicaoDescricaoFalha() throws Exception {
 		String url = "/produtos/like/havaina";
@@ -94,6 +95,36 @@ public class ProdutoResourceTest {
 		String url = "/produtos";
 		this.mvc.perform(post(url)
 				.content("{\"descri1cao\":\"Brinquedo\"}")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest())
+				.andDo(MockMvcResultHandlers.print());
+	}
+	
+	@Test
+	public void testa09RequisicaoPutSucesso() throws Exception {
+		String url = "/produtos";
+		this.mvc.perform(put(url)
+				.content("{\"id\":3,\"descricao\":\"Brinquedo\"}")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent())
+				.andDo(MockMvcResultHandlers.print());
+	}
+	
+	@Test
+	public void testa10RequisicaoPutFalha() throws Exception {
+		String url = "/produtos";
+		this.mvc.perform(put(url)
+				.content("{\"id\":777,\"descricao\":\"Sandalia Teste\"}")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound())
+				.andDo(MockMvcResultHandlers.print());
+	}
+	
+	@Test
+	public void testa11RequisicaoPutFalhaDescricao() throws Exception {
+		String url = "/produtos";
+		this.mvc.perform(post(url)
+				.content("{\"id\":3,\"descr1icao\":\"Sandalia Teste\"}")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
 				.andDo(MockMvcResultHandlers.print());
